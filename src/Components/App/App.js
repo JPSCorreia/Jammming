@@ -4,7 +4,8 @@ import './App.css';
 import SearchBar from '../SearchBar/SearchBar'
 import SearchResults from '../SearchResults/SearchResults'
 import Playlist from '../Playlist/Playlist'
-import TrackList from '../TrackList/TrackList';
+// import TrackList from '../TrackList/TrackList';
+import Spotify from '../../util/Spotify'
 
 class App extends React.Component {
 
@@ -16,35 +17,9 @@ class App extends React.Component {
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
     this.state = {
-      searchResults: [
-        {
-          name: 'nome teste',
-          artist: 'artista teste',
-          album: 'album teste',
-          id: 1
-        },
-        {
-          name: 'nome teste 2',
-          artist: 'artista teste 2',
-          album: 'album teste 2',
-          id: 2
-        },
-        {
-          name: 'nome teste 3',
-          artist: 'artista teste 3',
-          album: 'album teste 3',
-          id: 3
-        }
-      ],
-      playlistName: 'Playlist teste',
-      playlistTracks: [{
-        name: 'nome teste 4',
-        artist: 'artista teste 4',
-        album: 'album teste 4',
-        id: 4
-      }]
-
-
+      searchResults: [],
+      playlistName: 'My Playlist',
+      playlistTracks: []
     }
   }
 
@@ -76,16 +51,26 @@ class App extends React.Component {
 
   savePlaylist() {
     
-    const trackURIs = this.state.playlistTracks.map(track => track.uri);
+    const trackUris = this.state.playlistTracks.map(track => track.uri);
+    Spotify.savePlaylist(this.state.playlistName, trackUris).then(() => {
+      this.setState({
+        playlistName: 'New Playlist',
+        playlistTracks: []
+      })
+    })
     
+    
+
     // Bugfixing
     // 4roqhhRarPSjK7V9viFOVU
     //alert('its working')
 
   }
 
-  search(searchedByUser) {
-    console.log(searchedByUser);
+  search(term) {
+    Spotify.search(term).then(searchResults => {
+      this.setState({ searchResults: searchResults })
+    });
   }
 
 
